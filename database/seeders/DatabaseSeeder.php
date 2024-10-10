@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Factories\Factory;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 //use Illuminte\Database\Eloquent\Factories\HasFactory;
@@ -16,11 +16,12 @@ class DatabaseSeeder extends Seeder
     {
         
         
-         User::factory(10)->create();
+         User::factory(100)->create();
 
         User::factory()->create([
             'name' => 'Test User',
             'email' => 'test@example.com',
+            //'created_at'=> date('Y-m-d'),
         ]);
     }
 }
