@@ -18,26 +18,28 @@ class UserController extends Controller
         $password = $request->input('password');
         $user = User::where('email', $email)->where('password','=', $password)->first();
         $expiresAt = Carbon::now()->addSeconds(60);
-        if($user && Hash::check($password, $user->password)){
-            $token=$user->createToken('api-token',['*'])->expiresAt($expiresAt)->plainTextToken;
+        if($user) /**&& Hash::check($password, $user->password))*/{
+            $token=$user->createToken('api-token');//,['*'])->expiresAt(now()->addMinutes(1))->plainTextToken;
             return response()->json([
-                "user"=>$email,
-                "token"=>$token,
-                "expires_at"=>$expiresAt->toDateTimeString()
+                'user'=>$email,
+                'token'=>$token,
+                'expires_at'=>$expiresAt->toDateTimeString()
                 //"password"=>$token
             ], 200);
         }
         return response()->json(["message"=>"You are not Authorized"], 401);
        
     }
-    // public function refreshToken(){
-    //     $user = Auth::user();
-    //     if(!$user->tokenCan('api-token')){
-    //     return response()->json(['message'=>'Token invalido o expirado'], 401);
-    // }
-    // $user->token('api-token')->expiresAt(Carbon::now()->addSeconds(60));
-    // return response()->json(['message'=>'Token renovado']);
-    // }
+    public function refreshToken(){
+        $user = Auth::user();
+        if(!$user->tokenCan('api-token')){
+        return response()->json(['message'=>'Token invalido o expirado'], 401);
+    }
+    $token = $user->tokens()->where('name', 'api-token')->first();
+    $token->expires_at=Carbon::now()->addSeconds(60);
+    $token->save();
+    return response()->json(['message'=>'Token renovado']);
+    }
     public function users_by_year(Request $request){
         $year = $request->input('year');
         if(!$year){
